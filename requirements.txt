@@ -1,0 +1,4 @@
+qdrant_client
+openai
+Flask
+PyPDF2
