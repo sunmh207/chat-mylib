@@ -46,7 +46,7 @@
           // 填充用户列表
           for (var i = 0; i < data.items.length; i++) {
             var file = data.items[i];
-            var row = '<tr><td>' + file.id + '</td><td>' + file.filename + '</td><td> <a href="/delfile?id='+file.id+'">删除</a></td></tr>';
+            var row = '<tr><td>' + file.id + '</td><td>' + file.filename + '</td><td> <a href="#" onclick=confirmDel("'+ file.id + '")>删除</a></td></tr>';
             $('#file-table tbody').append(row);
           }
 
@@ -74,6 +74,14 @@
           */
         }
       });
+    }
+
+    function confirmDel(id){
+      if (confirm("确定要删除文件吗？")) {
+        window.location.href="/delfile?id="+id;
+      }else{
+        return;
+      }
     }
   </script>
 </body>
