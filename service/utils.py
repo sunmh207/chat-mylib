@@ -1,5 +1,5 @@
 from qdrant_client import QdrantClient
-from qdrant_client.http.models import Distance, VectorParams, PointStruct
+from qdrant_client.http.models import Distance, VectorParams, PointStruct, models
 from service.file import FileStruct
 import os
 import openai
@@ -51,6 +51,7 @@ class LibTookit:
             {'role': 'user', 'content': q},
         ]
 
+    #问答
     def query(self, query_str):
         """
         执行逻辑：
@@ -100,6 +101,7 @@ class LibTookit:
         return [
             {'role': 'user', 'content': q},
         ]
+
     def summary(self, text):
         completion = openai.ChatCompletion.create(
             temperature=0.7,
@@ -107,3 +109,23 @@ class LibTookit:
             messages=self.__make_summary_prompt(text),
         )
         return completion.choices[0].message.content
+
+    #资源列表
+    def point_list(self,next_page_offset, limit):
+        qdclient = QdrantClient(self.QDRANT_IP, port=self.QDRANT_PORT)
+        return qdclient.scroll(
+            collection_name=self.COLLECTION_NAME,
+            offset=next_page_offset,
+            limit=limit,
+            with_payload=True,
+        )
+
+    # 删除资源
+    def del_point(self, id):
+        qdclient = QdrantClient(self.QDRANT_IP, port=self.QDRANT_PORT)
+        return qdclient.delete(
+            collection_name=self.COLLECTION_NAME,
+            points_selector=models.PointIdsList(
+                points=[id],
+            ),
+        )

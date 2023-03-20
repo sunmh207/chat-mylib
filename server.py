@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import hashlib
 from openai import OpenAIError
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify,redirect, url_for
 from service.file_parser import FileParser
 from service.exception import BaseException
 from service.utils import LibTookit
@@ -32,7 +32,7 @@ def upload_success_response(msg, summary):
 
 
 @app.route("/")
-def root():
+def homepage():
     return render_template('index.html')
 
 @app.route("/upload", methods=['GET','POST'])
@@ -75,6 +75,35 @@ def search():
     question = request.form['question']
     answer = LibTookit().query(question)
     return answer
+
+@app.route("/admin")
+def admin():
+    return render_template('admin/index.html')
+
+@app.route("/files")
+def files():
+    offset = 0
+    limit =300
+    list = LibTookit().point_list(offset,limit)
+    files = list[0]
+
+    entities=[]
+    for file in files:
+        entity = {
+            "id":file.id,
+            "filename":file.payload['filename'],
+        }
+        entities.append(entity)
+
+    return {
+        "items":entities,
+    }
+
+@app.route("/delfile", methods=['GET','POST'])
+def delfiel():
+    id = request.args.get('id')
+    LibTookit().del_point(id)
+    return redirect(url_for('admin'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3001)
