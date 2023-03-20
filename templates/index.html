@@ -565,7 +565,7 @@
     <link rel="stylesheet" href="http://npm.elemecdn.com/markdown-it-texmath@1.0.0/css/texmath.css">
     <script src="http://npm.elemecdn.com/markdown-it-texmath@1.0.0/texmath.js"></script>
     <script>
-        const API_URL = "/v1/chat/completions";
+        const API_URL = "/completions";
         const messagsEle = document.getElementsByClassName("messages")[0];
         const chatlog = document.getElementById("chatlog");
         const contEle = document.getElementById("isCont");
@@ -692,11 +692,11 @@
 
 
         //向服务器发送请求
-        const sendPrompt = async (prompt) => {
+        const sendPrompt = async (question) => {
             const xhr = new XMLHttpRequest();
             xhr.open('POST', API_URL,true);
             var data = new FormData();
-            data.append("prompt",prompt);
+            data.append("question",question);
             xhr.onreadystatechange = function () {
               if (xhr.readyState === 4 && xhr.status === 200) {
                 console.log(xhr.responseText);
@@ -776,13 +776,18 @@
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
-                        alert("文件上传成功");
-                        var msg = "文件摘要："+xhr.responseText;
-                        currentResEle = document.createElement("div");
-                        currentResEle.className = "response markdown-body";
-                        currentResEle.innerHTML = md.render(msg);
-                        chatlog.appendChild(currentResEle);
-                        messagsEle.scrollTo(0, messagsEle.scrollHeight);
+                        var res = JSON.parse(xhr.responseText);
+                        if(res.success == 1){
+                            var msg = "文件摘要："+res.summary;
+                            currentResEle = document.createElement("div");
+                            currentResEle.className = "response markdown-body";
+                            currentResEle.innerHTML = md.render(msg);
+                            chatlog.appendChild(currentResEle);
+                            messagsEle.scrollTo(0, messagsEle.scrollHeight);
+                            alert("文件上传成功");
+                        }else{
+                            alert(res.message)
+                        }
                         endAction();
                     } else {
                         alert('文件上传失败');
