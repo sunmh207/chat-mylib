@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-import uuid
 import hashlib
-from werkzeug.utils import secure_filename
-from unicodedata import normalize
+from openai import OpenAIError
 from flask import Flask, render_template, request, jsonify
 from service.file_parser import FileParser
 from service.exception import BaseException
@@ -58,7 +56,8 @@ def upload():
                 text = parser.parse(file_path)
             except BaseException as e:
                 return upload_error_response(msg = e.message)
-
+            except OpenAIError as openaie:
+                return upload_error_response(msg=openaie.message)
 
             summary = LibTookit().summary(text)
 

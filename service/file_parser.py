@@ -2,13 +2,13 @@ import os
 import PyPDF2
 import docx
 from service.exception import BaseException,ExceededMaxPagesError,ExceededMaxWordsError,UnsupportError
-# import openpyxl
+import openpyxl
 
 
 class FileParser(object):
     SUPPORT_DOC_MAX_WORDS = 20000
     SUPPORT_DOC_MAX_PAGES = 10
-    SUPPORT_EXTS = ['.txt', '.csv','md','.pdf', '.doc', '.docx']
+    SUPPORT_EXTS = ['.txt', '.csv','md','.pdf', '.doc', '.docx','.xlsx','xls']
 
     def __get_parser_by_ext(self, ext):
         if ext.lower() in ['.txt','.md','.csv']:
@@ -17,13 +17,15 @@ class FileParser(object):
             return PDFParser();
         elif ext.lower() in ['.doc','.docx']:
             return WordParser();
+        elif ext.lower() in ['.xls','.xlsx']:
+            return ExcelParser();
 
     #将文件内容解析为文本
     def parse(self, file_path):
         #根据扩展名生成策略类
         ext = os.path.splitext(file_path)[1].lower()
         if ext not in self.SUPPORT_EXTS:
-            raise UnsupportError('不支持的文件格式！ 目前支持的文件格式有:' + (ext for ext in self.SUPPORT_EXTS))
+            raise UnsupportError('不支持的文件格式！ 目前支持的文件格式有:' + ','.join(self.SUPPORT_EXTS))
 
         paraser = self.__get_parser_by_ext(ext);
         return paraser.parse(file_path)
@@ -72,3 +74,18 @@ class WordParser(FileParser):
         # 返回解析后的文本内容
         return text
 
+class ExcelParser(FileParser):
+    def parse(self, file_path):
+        # 打开Excel文件
+        wb = openpyxl.load_workbook(file_path)
+        # 选择第一个工作表
+        sheet = wb.active
+        # 读取每一个单元格的内容
+        text = ''
+        for row in sheet.rows:
+            row_str = '|'
+            for cell in row:
+                row_str += str(cell.value) + '|'
+            text += row_str + '\n'
+        # 返回解析后的文本内容
+        return text
