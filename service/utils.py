@@ -70,7 +70,7 @@ class LibTookit:
         search_result = qdclient.search(
             collection_name=self.COLLECTION_NAME,
             query_vector=openai_embeddings["data"][0]["embedding"],
-            limit=3,
+            limit=5,
             search_params={"exact": False, "hnsw_ef": 128}
         )
         answers = []
@@ -79,8 +79,8 @@ class LibTookit:
         因为提示词的长度有限，每个匹配的相关摘要我在这里只取了前300个字符，如果想要更多的相关摘要，可以把这里的300改为更大的值
         """
         for result in search_result:
-            if len(result.payload["text"]) > 300:
-                summary = result.payload["text"][:300]
+            if len(result.payload["text"]) > 1000:
+                summary = result.payload["text"][:1000]
             else:
                 summary = result.payload["text"]
             answers.append({"filename": result.payload["filename"], "text": summary})

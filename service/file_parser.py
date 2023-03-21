@@ -87,5 +87,7 @@ class ExcelParser(FileParser):
             for cell in row:
                 row_str += str(cell.value) + '|'
             text += row_str + '\n'
+        if (len(text) > self.SUPPORT_DOC_MAX_WORDS):
+            raise ExceededMaxWordsError('超出最大字数:' + str(self.SUPPORT_DOC_MAX_WORDS))
         # 返回解析后的文本内容
         return text

@@ -500,6 +500,7 @@
                     <label for="fileInput"> 上传资料</label>
                     <input type="file" id="fileInput" style="display:none;">
 
+                    <label onclick="gotoAdmin()">｜资料列表</label>
                 </div>
                 <div id="continueConv"  style="display:none;">
                     <span>连续对话</span>
@@ -764,7 +765,11 @@
                 alert('请选择文件');
                 return;
             }
-            //loading
+            if (file.size > 10 * 1024 * 1024) {
+                alert('文件大小不能超过10M');
+                return;
+            }
+
             loading = true;
             sendBtnEle.disabled = true;
             sendBtnEle.classList.remove("loaded");
@@ -797,6 +802,10 @@
             const formData = new FormData();
             formData.append('file', file);
             xhr.send(formData);
+        }
+
+        function gotoAdmin(){
+            window.location.href="/admin";
         }
         //发送按钮点击事件
         sendBtnEle.onclick = genFunc;
