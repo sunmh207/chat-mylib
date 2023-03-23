@@ -11,6 +11,7 @@
 ## 设置OPENAI_API_KEY
 
 `export OPENAI_API_KEY=sk-xxxxxx`
+`export OPENAI_API_BASE=https://open.aiproxy.xyz/v1`
 
 ## 运行
 

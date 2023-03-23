@@ -111,6 +111,9 @@ class LibTookit:
         ]
 
     def summary(self, text):
+        #completion接口输入不能超过4097个token
+        if(len(text)>2000):
+            text = text[:2000]
         completion = openai.ChatCompletion.create(
             temperature=0.7,
             model="gpt-3.5-turbo",
