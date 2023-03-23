@@ -3,3 +3,5 @@ upload
 docs
 
 .idea
+
+*.env

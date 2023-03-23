@@ -3,13 +3,21 @@ from qdrant_client.http.models import Distance, VectorParams, PointStruct, model
 from service.file import FileStruct
 import os
 import openai
+from configparser import ConfigParser
 
 
 
 class LibTookit:
-    QDRANT_IP = '127.0.0.1'
-    QDRANT_PORT = 6333
-    COLLECTION_NAME = 'data_collection'
+    # QDRANT_IP = '127.0.0.1'
+    # QDRANT_PORT = 6333
+    # COLLECTION_NAME = 'data_collection'
+
+    config = ConfigParser()
+    config.read('.env')
+
+    QDRANT_IP = config.get('qdrant', 'ip')
+    QDRANT_PORT = config.getint('qdrant', 'port')
+    COLLECTION_NAME = config.get('qdrant', 'collection_name')
 
     OPENAI_EMBEDDING_MODEL = "text-embedding-ada-002"
     VECTOR_SIZE = 1536

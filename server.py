@@ -7,11 +7,18 @@ from service.exception import BaseException
 from service.utils import LibTookit
 from service.file import FileStruct
 import os
+from configparser import ConfigParser
 
 app = Flask(__name__)
 app.debug = True  # 开启debug模式
 
-UPLOAD_DIR = 'upload'
+config = ConfigParser()
+config.read('.env')
+
+UPLOAD_DIR = config.get('storage', 'upload_dir')
+FLASK_HOST = config.get('flask', 'host')
+FLASK_PORT = config.getint('flask', 'port')
+
 
 #生成报错信息格式
 def upload_error_response(msg):
@@ -106,4 +113,4 @@ def delfiel():
     return redirect(url_for('admin'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3001)
+    app.run(host=FLASK_HOST, port=FLASK_PORT)
