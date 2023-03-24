@@ -2,10 +2,12 @@
 import hashlib
 from openai import OpenAIError
 from flask import Flask, render_template, request, jsonify,redirect, url_for
-from service.file_parser import FileParser
-from service.exception import BaseException
-from service.utils import LibTookit
-from service.file import FileStruct
+from mylib.service.file_parser import FileParser
+from mylib.service.exception import BaseException
+from mylib.service.ai_service import AIService
+from mylib.service.resource_service import ResourceService
+# from service.utils import LibTookit
+# from service.file import FileStruct
 import os
 from configparser import ConfigParser
 
@@ -57,30 +59,21 @@ def upload():
             file.save(file_path)
             print('收到上传文件:origon name=', file.filename, ', 保存后名称=', uuid_filename)
 
-            #文件转化为文本内容
-            parser = FileParser()
             try:
-                text = parser.parse(file_path)
+                resource = ResourceService().upsert(file_path,file.filename)
             except BaseException as e:
                 return upload_error_response(msg = e.message)
             except OpenAIError as openaie:
                 return upload_error_response(msg=openaie.message)
 
-            summary = LibTookit().summary(text)
-
-            file_struct = FileStruct(id=id, filename=file.filename, text=text)
-            #保存到qdrant库
-            tookit = LibTookit()
-            tookit.save_to_qdrant(file_struct)
-
-            return upload_success_response(msg = '上传成功', summary = summary)
+            return upload_success_response(msg = '上传成功', summary = resource.summary)
         else:
             upload_error_response(msg = '未收到上传文件')
 
 @app.route('/completions', methods=['POST'])
 def search():
     question = request.form['question']
-    answer = LibTookit().query(question)
+    answer = AIService().make_completion(question)
     return answer
 
 @app.route("/admin")
@@ -91,19 +84,9 @@ def admin():
 def files():
     offset = 0
     limit =300
-    list = LibTookit().point_list(offset,limit)
-    files = list[0]
-
-    entities=[]
-    for file in files:
-        entity = {
-            "id":file.id,
-            "filename":file.payload['filename'],
-        }
-        entities.append(entity)
-
+    resources =  ResourceService().list(offset,limit)
     return {
-        "items":entities,
+        "items":resources,
     }
 
 @app.route("/delfile", methods=['GET','POST'])

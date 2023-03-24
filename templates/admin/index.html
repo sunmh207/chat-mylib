@@ -21,6 +21,7 @@
       <tr>
         <th scope="col">ID</th>
         <th scope="col">名称</th>
+        <th scope="col">更新时间</th>
         <th scope="col">操作</th>
       </tr>
     </thead>
@@ -47,8 +48,8 @@
 
           // 填充用户列表
           for (var i = 0; i < data.items.length; i++) {
-            var file = data.items[i];
-            var row = '<tr><td>' + file.id + '</td><td>' + file.filename + '</td><td> <a href="#" onclick=confirmDel("'+ file.id + '")>删除</a></td></tr>';
+            var resource = data.items[i];
+            var row = '<tr><td>' + resource.id + '</td><td>' + resource.name + '</td><td>' + resource.updated_time + '</td><td> <a href="#" onclick=confirmDel("'+ resource.id + '")>删除</a></td></tr>';
             $('#file-table tbody').append(row);
           }
 
