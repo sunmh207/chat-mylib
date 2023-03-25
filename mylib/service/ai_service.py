@@ -41,17 +41,22 @@ class AIService:
 
 
     def __make_completion_prompt(self, question, answers):
-        system = '你是一个问答机器人'
-        q = "我们提供了以下背景信息. \n"
+        # system = '你是一个问答机器人'
+        user_prompt1='我们将给你提供一些资料，资料包括的信息项有:文件名称、页码、资料内容\n'
+
+        user_prompt2 = ""
         # 带有索引的格式
         for index, answer in enumerate(answers):
-            q += str(index + 1) +  '. '+ answer['resource_name'] +':' + str(answer['text']) + '\n'
-        q += "请根据这些背景信息而不是你已有的先验知识回答下面的问题：\n"
-        q += question
+            user_prompt2 += '资料' + str(index + 1) + '\n' \
+                 + '资料名称:'+ answer['resource_name'] +'\n' \
+                 + '资料内容：' +str(answer['text']) + '\n'
+        user_prompt3 = "请根据刚才的资料，回答下面的问题。并给出所在资料的名称和页码信息。\n"
 
         return [
-            {'role': 'system', 'content': system},
-            {'role': 'user', 'content': q},
+            # {'role': 'system', 'content': system},
+            {'role': 'user', 'content': user_prompt1},
+            {'role': 'user', 'content': user_prompt2},
+            {'role': 'user', 'content': user_prompt3},
         ]
 
     def make_completion(self, prompt):

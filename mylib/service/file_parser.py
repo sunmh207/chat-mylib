@@ -24,8 +24,8 @@ class FileStruct:
 
 
 class FileParser:
-    SUPPORT_DOC_MAX_WORDS = 20000
-    SUPPORT_DOC_MAX_PAGES = 20
+    SUPPORT_DOC_MAX_WORDS = 50000
+    SUPPORT_DOC_MAX_PAGES = 50
     # SUPPORT_EXTS = ['.txt', '.csv', 'md', '.pdf', '.doc', '.docx', '.xlsx', 'xls']
     #word 没办法分页读取,暂时不支持
     SUPPORT_EXTS = ['.txt', '.csv', 'md', '.pdf','.xlsx', 'xls']
