@@ -64,7 +64,7 @@ def upload():
             except BaseException as e:
                 return upload_error_response(msg = e.message)
             except OpenAIError as openaie:
-                return upload_error_response(msg=openaie.message)
+                return upload_error_response(msg=openaie.user_message)
 
             return upload_success_response(msg = '上传成功', summary = resource.summary)
         else:
@@ -92,7 +92,7 @@ def files():
 @app.route("/delfile", methods=['GET','POST'])
 def delfiel():
     id = request.args.get('id')
-    LibTookit().del_point(id)
+    ResourceService().delete(id)
     return redirect(url_for('admin'))
 
 if __name__ == '__main__':

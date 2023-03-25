@@ -98,3 +98,5 @@ class ResourceService:
             conn.rollback()
             logger.error("从MySQL中删除Resource {0}，失败".format(id))
 
+        #从qdrant中删除
+        QdrantService().delete_by_resource_id(id)

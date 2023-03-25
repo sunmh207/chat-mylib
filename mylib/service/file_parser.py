@@ -26,7 +26,9 @@ class FileStruct:
 class FileParser:
     SUPPORT_DOC_MAX_WORDS = 20000
     SUPPORT_DOC_MAX_PAGES = 20
-    SUPPORT_EXTS = ['.txt', '.csv', 'md', '.pdf', '.doc', '.docx', '.xlsx', 'xls']
+    # SUPPORT_EXTS = ['.txt', '.csv', 'md', '.pdf', '.doc', '.docx', '.xlsx', 'xls']
+    #word 没办法分页读取,暂时不支持
+    SUPPORT_EXTS = ['.txt', '.csv', 'md', '.pdf','.xlsx', 'xls']
 
     def __get_parser_by_ext(self, ext):
         if ext.lower() in ['.txt', '.md', '.csv']:

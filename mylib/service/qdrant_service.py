@@ -42,6 +42,13 @@ class QdrantService:
         logger.info("resouce{0}的第{1}页写入qdrant成功".format(point.payload['resource_name'],point.payload['page_no']))
 
     def search(self, query_vector, limit=3, search_params={"exact": False, "hnsw_ef": 128}) -> List[types.ScoredPoint]:
+        """
+        搜索与query_vector最相似的limit个向量
+        :param query_vector:
+        :param limit:
+        :param search_params:
+        :return:
+        """
         qdclient = QdrantClient(self.QDRANT_IP, port=self.QDRANT_PORT)
         search_result = qdclient.search(
             collection_name=self.COLLECTION_NAME,
@@ -50,3 +57,28 @@ class QdrantService:
             search_params=search_params
         )
         return search_result
+
+    def delete_by_point_id(self, point_id):
+        qdclient = QdrantClient(self.QDRANT_IP, port=self.QDRANT_PORT)
+        qdclient.delete(
+            collection_name=self.COLLECTION_NAME,
+            points_selector=models.PointIdsList(
+                points=[point_id],
+            ),
+        )
+    def delete_by_resource_id(self,resource_id):
+        qdclient = QdrantClient(self.QDRANT_IP, port=self.QDRANT_PORT)
+        qdclient.delete(
+            collection_name=self.COLLECTION_NAME,
+            points_selector=models.FilterSelector(
+                filter=models.Filter(
+                    must=[
+                        models.FieldCondition(
+                            key="resource_id",
+                            match=models.MatchValue(value=resource_id),
+                        ),
+                    ],
+                )
+            ),
+        )
+
