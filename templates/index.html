@@ -383,19 +383,6 @@
             color: gray;
         }
 
-/*
-        #continueConv {
-            position: absolute;
-            right: 10px;
-            top: 22px;
-            color: gray;
-        }
-
-        #continueConv select {
-            outline: none;
-            border-color: gray;
-        }
-*/
 
         #clearConv {
             position: absolute;
@@ -440,53 +427,48 @@
         .loading>svg {
             display: block;
         }
-
-        .switch-slide {
-            display: inline-block;
-            vertical-align: middle;
+    </style>
+    <style>
+        #loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
         }
-
-        .switch-slide-label {
-            display: block;
-            width: 38px;
-            height: 18px;
-            background: #909090;
-            border-radius: 30px;
-            cursor: pointer;
-            position: relative;
-            -webkit-transition: 0.3s ease;
-            transition: 0.3s ease;
-        }
-
-        .switch-slide-label:after {
-            content: '';
-            display: block;
-            width: 16px;
-            height: 16px;
+        #loading .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto;
             border-radius: 100%;
-            background: #fff;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
-            position: absolute;
-            left: 1px;
-            top: 1px;
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-            -webkit-transition: 0.3s ease;
-            transition: 0.3s ease;
+            border: 3px solid transparent;
+            border-top-color: #fff;
+            animation: spin .75s linear infinite;
         }
-
-        .switch-slide input:checked+label {
-            background: #99c959;
-            transition: 0.3s ease;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
         }
-
-        .switch-slide input:checked+label:after {
-            left: 21px;
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9998;
         }
     </style>
 </head>
 
 <body>
+    <div id="overlay"></div>
+    <div id="loading">
+        <div class="spinner"></div>
+    </div>
     <div>
         <div class="chat_window">
             <div class="top_menu">
@@ -499,8 +481,9 @@
                 <div class="upload">
                     <label for="fileInput"> 上传资料</label>
                     <input type="file" id="fileInput" style="display:none;">
-
                     <label onclick="gotoAdmin()">｜资料列表</label>
+
+
                 </div>
                 <div id="continueConv"  style="display:none;">
                     <span>连续对话</span>
@@ -565,6 +548,8 @@
     <script src="http://cdn.staticfile.org/KaTeX/0.16.4/katex.min.js"></script>
     <link rel="stylesheet" href="http://npm.elemecdn.com/markdown-it-texmath@1.0.0/css/texmath.css">
     <script src="http://npm.elemecdn.com/markdown-it-texmath@1.0.0/texmath.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script>
         const API_URL = "/completions";
         const messagsEle = document.getElementsByClassName("messages")[0];
@@ -769,12 +754,7 @@
                 alert('文件大小不能超过10M');
                 return;
             }
-
-            loading = true;
-            sendBtnEle.disabled = true;
-            sendBtnEle.classList.remove("loaded");
-            sendBtnEle.classList.add("loading");
-
+            showSpinner();
             const xhr = new XMLHttpRequest();
             xhr.open('POST', '/upload', true);
             xhr.setRequestHeader('cache', false);
@@ -796,7 +776,7 @@
                     } else {
                         alert('文件上传失败');
                     }
-                    endAction();
+                    stopSpinner();
                 }
             };
             const formData = new FormData();
@@ -811,6 +791,24 @@
         sendBtnEle.onclick = genFunc;
         //上传资料按钮事件
         uploadBtnEle.onchange = upload;
+    </script>
+    <script>
+        const showSpinner = function(){
+            var btn = document.getElementById("fileInput");
+            var loading = document.getElementById("loading");
+            var overlay = document.getElementById("overlay");
+            btn.disabled = true;
+            loading.style.display = "block";
+            overlay.style.display = "block";
+        }
+        const stopSpinner = function(){
+            var btn = document.getElementById("fileInput");
+            var loading = document.getElementById("loading");
+            var overlay = document.getElementById("overlay");
+            btn.disabled = false;
+            loading.style.display = "none";
+            overlay.style.display = "none";
+        }
     </script>
 </body>
 

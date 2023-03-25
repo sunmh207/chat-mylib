@@ -28,7 +28,7 @@ class FileParser:
     SUPPORT_DOC_MAX_PAGES = 50
     # SUPPORT_EXTS = ['.txt', '.csv', 'md', '.pdf', '.doc', '.docx', '.xlsx', 'xls']
     #word 没办法分页读取,暂时不支持
-    SUPPORT_EXTS = ['.txt', '.csv', 'md', '.pdf','.xlsx', 'xls']
+    SUPPORT_EXTS = ['.txt', '.csv', '.md', '.pdf','.xlsx']
 
     def __get_parser_by_ext(self, ext):
         if ext.lower() in ['.txt', '.md', '.csv']:
@@ -37,7 +37,7 @@ class FileParser:
             return PDFParser();
         elif ext.lower() in ['.doc', '.docx']:
             return WordParser();
-        elif ext.lower() in ['.xls', '.xlsx']:
+        elif ext.lower() in ['.xlsx']:
             return ExcelParser();
 
     # 将文件内容解析为文本
