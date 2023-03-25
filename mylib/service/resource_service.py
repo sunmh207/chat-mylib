@@ -27,7 +27,7 @@ class ResourceService:
         cursor = conn.cursor()
 
         #判断resource是否存在
-        query_sql = "select * from resource where id = %s "
+        query_sql = "select * from resource where id = %s"
         cursor.execute(query_sql, resource_id)
         result = cursor.fetchone()
         if result:
@@ -66,7 +66,7 @@ class ResourceService:
         resources = []
         conn = MySQLService().get_connection()
         cursor = conn.cursor()
-        sql = "select id, name, summary, type, created_time, updated_time from resource limit %s,%s"
+        sql = "select id, name, summary, type, created_time, updated_time from resource order by updated_time desc limit %s,%s"
         try:
             cursor.execute(sql,(start, limit))
             result = cursor.fetchall()

@@ -41,23 +41,28 @@ class AIService:
 
 
     def __make_completion_prompt(self, question, answers):
+        count = len(answers)
         # system = '你是一个问答机器人'
-        user_prompt1='我们将给你提供一些资料，资料包括的信息项有:文件名称、页码、资料内容\n'
+        user_prompt1='我给你提供以下{0}份资料\n'.format(count)
 
         user_prompt2 = ""
         # 带有索引的格式
         for index, answer in enumerate(answers):
-            user_prompt2 += '资料' + str(index + 1) + '\n' \
-                 + '资料名称:'+ answer['resource_name'] +'\n' \
-                 + '资料内容：' +str(answer['text']) + '\n'
-        user_prompt3 = "请根据刚才的资料，回答下面的问题。并给出所在资料的名称和页码信息。\n"
+            user_prompt2 += '第' + str(index+1) +'份资料\n'\
+                + '资料名称:《'+ answer['resource_name'] +'》\n' \
+                + '所在页码:' + str(answer['page_no'] + 1)+'\n' \
+                + '资料内容:' + str(answer['text']) + '\n'
+        user_prompt3 = "请根据刚才的资料，回答下面的问题,如果内容超过多，则不必完整回答，告诉我对应的资料的名称和页码信息即可。\n"
 
-        return [
+        prompt = [
             # {'role': 'system', 'content': system},
             {'role': 'user', 'content': user_prompt1},
             {'role': 'user', 'content': user_prompt2},
             {'role': 'user', 'content': user_prompt3},
+            {'role': 'user', 'content': '问题:' + question},
         ]
+        logger.debug("组装后的prompt:{0}".format(prompt))
+        return prompt
 
     def make_completion(self, prompt):
         """
@@ -83,7 +88,7 @@ class AIService:
                 summary = result.payload["text"][:1000]
             else:
                 summary = result.payload["text"]
-            answers.append({"resource_name": result.payload["resource_name"], "text": summary})
+            answers.append({"resource_name": result.payload["resource_name"], "page_no": result.payload["page_no"],"text": summary})
 
         completion = openai.ChatCompletion.create(
             temperature=0.7,
