@@ -50,9 +50,9 @@ class AIService:
         for index, answer in enumerate(answers):
             user_prompt2 += '第' + str(index+1) +'份资料\n'\
                 + '资料名称:《'+ answer['resource_name'] +'》\n' \
-                + '所在页码:' + str(answer['page_no'] + 1)+'\n' \
+                + '所在页码:第' + str(answer['page_no'] + 1)+'页\n' \
                 + '资料内容:' + str(answer['text']) + '\n'
-        user_prompt3 = "请根据刚才的资料，回答下面的问题,如果内容超过多，则不必完整回答，告诉我对应的资料的名称和页码信息即可。\n"
+        user_prompt3 = "请根据刚才的资料，回答下面的问题,如果内容超过多，则不必完整回答，显示对应资料的名称、页码和章节信息。\n"
 
         prompt = [
             # {'role': 'system', 'content': system},
