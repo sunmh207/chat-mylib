@@ -1,7 +1,14 @@
+#忽略目录
 venv
-upload
 docs
 __pycache__
 .idea
+test
+
+#忽略upload目录下的文件,但保留upload目录
+upload/*
+!upload/*.keep
+
+#忽略文件类型
 .DS_Store
 *.env
