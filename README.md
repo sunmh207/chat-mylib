@@ -40,7 +40,7 @@
 `http://localhost:3000`
 `上传txt或pdf文件，然后在对话框询问。`
 
-演示站：[http://chat.chatmylib.xyz](http://chat.chatmylib.xyz)
+演示站：[http://www.chatmylib.xyz](http://www.chatmylib.xyz)
 
 ## 备注
 `
