@@ -8,7 +8,7 @@
 
 ## 安装说明
 
-### 1.安装python 3.x版本
+### 1.安装python 3.10版本
 `略`
 
 ### 2.安装python依赖
@@ -16,7 +16,7 @@
 `pip install -r requirements.txt`
 
 ### 3.安装Qdrant向量数据库
-`docker run -p 6333:6333 \ -v $(pwd)/qdrant_storage:/qdrant/storage \ qdrant/qdrant `
+`docker run -p 6333:6333 -v $(pwd)/qdrant_storage:/qdrant/storage qdrant/qdrant `
 
 ### 4.安装MySQL数据库
 `sudo apt install mysql-server`
@@ -25,8 +25,6 @@
 ### 5.设置OPENAI_API_KEY
 
 `export OPENAI_API_KEY={你的OPENAI_API_KEY}`
-
-`export OPENAI_API_BASE=https://open.aiproxy.xyz/v1`
 
 ### 6.配置参数
 `复制.env.dist 为 .env，修改文件里的相关参数，如配置MySQL用户名/密码等`

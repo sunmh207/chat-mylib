@@ -1,5 +1,7 @@
 CREATE DATABASE mylib;
 
+USE mylib;
+
 CREATE TABLE `resource` (
   `id` varchar(40) NOT NULL,
   `name` varchar(255) NOT NULL,

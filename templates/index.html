@@ -482,17 +482,7 @@
                     <label for="fileInput"> 上传资料</label>
                     <input type="file" id="fileInput" style="display:none;">
                     <label onclick="gotoAdmin()">｜资料列表</label>
-
-
                 </div>
-                <div id="continueConv"  style="display:none;">
-                    <span>连续对话</span>
-                    <label class="switch-slide">
-                        <input type="checkbox" id="isCont" checked hidden />
-                        <label for="isCont" class="switch-slide-label"></label>
-                    </label>
-                </div>
-
             </div>
             <ul class="messages">
                 <div style="text-align: left;">
@@ -554,17 +544,12 @@
         const API_URL = "/completions";
         const messagsEle = document.getElementsByClassName("messages")[0];
         const chatlog = document.getElementById("chatlog");
-        const contEle = document.getElementById("isCont");
         const sendBtnEle = document.getElementById("sendbutton");
         const textarea = document.getElementById("chatinput");
         const uploadBtnEle = document.getElementById("fileInput");
         textarea.focus();
         let data = [];
         let loading = false;
-        let isCont = contEle.checked;
-        contEle.onchange = () => {
-            isCont = contEle.checked;
-        }
         const md = markdownit({
             highlight: function (str, lang) { // markdown高亮
                 try {
@@ -678,14 +663,15 @@
 
 
         //向服务器发送请求
-        const sendPrompt = async (question) => {
+        const sendPrompt = async () => {
             const xhr = new XMLHttpRequest();
             xhr.open('POST', API_URL,true);
-            var data = new FormData();
-            data.append("question",question);
+            xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onreadystatechange = function () {
               if (xhr.readyState === 4 && xhr.status === 200) {
                 console.log(xhr.responseText);
+                //将返回的答案存放到data里,以便下次一起发送
+                data.push({role: "assistant", content: xhr.responseText});
                 currentResEle = document.createElement("div");
                 currentResEle.className = "response markdown-body";
                 currentResEle.innerHTML = md.render(xhr.responseText);
@@ -696,7 +682,7 @@
                 console.log('请求失败');
               }
             };
-            xhr.send(data);
+            xhr.send(JSON.stringify(data));
 
         }
         const generateText = (message) => {
@@ -704,17 +690,14 @@
             sendBtnEle.disabled = true;
             sendBtnEle.classList.remove("loaded");
             sendBtnEle.classList.add("loading");
-
-            //data.push({role: "user", content: message.trim()});
+            //将发送数据存储到data
+            data.push({role: "user", content: message.trim()});
             let request = document.createElement("div");
             request.className = "markdown-body";
             request.innerHTML = md.render(message);
             chatlog.appendChild(request);
             messagsEle.scrollTo(0, messagsEle.scrollHeight);
-            sendPrompt(message);
-            if (!isCont) {
-                data = [];
-            }
+            sendPrompt();
         };
         textarea.onkeydown = (event) => {
             if (event.keyCode === 13) {

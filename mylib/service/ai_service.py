@@ -40,10 +40,9 @@ class AIService:
         return completion.choices[0].message.content
 
 
-    def __make_completion_prompt(self, question, answers):
-        count = len(answers)
+    def __make_completion_prompt(self, prompts, answers):
         # system = '你是一个问答机器人'
-        user_prompt1='我给你提供以下{0}份资料\n'.format(count)
+        user_prompt1='我给你提供以下几份资料\n'
 
         user_prompt2 = ""
         # 带有索引的格式
@@ -52,19 +51,19 @@ class AIService:
                 + '资料名称:《'+ answer['resource_name'] +'》\n' \
                 + '所在页码:第' + str(answer['page_no'] + 1)+'页\n' \
                 + '资料内容:' + str(answer['text']) + '\n'
-        user_prompt3 = "请根据刚才的资料，回答下面的问题,如果内容超过多，则不必完整回答，显示对应资料的名称、页码和章节信息。\n"
+        user_prompt3 = "请根据上述资料，回答下面的问题,不超过300字，如果必要，请给出相关资料的名称、页码和章节信息。\n"
 
-        prompt = [
+        post_prompts = [
             # {'role': 'system', 'content': system},
             {'role': 'user', 'content': user_prompt1},
             {'role': 'user', 'content': user_prompt2},
             {'role': 'user', 'content': user_prompt3},
-            {'role': 'user', 'content': '问题:' + question},
         ]
-        logger.debug("组装后的prompt:{0}".format(prompt))
-        return prompt
+        post_prompts.extend(prompts)
+        logger.debug("组装后的prompt:{0}".format(post_prompts))
+        return post_prompts
 
-    def make_completion(self, prompt):
+    def make_completion(self, prompts:list):
         """
         执行逻辑：
         首先使用openai的Embedding API将输入的文本转换为向量
@@ -73,19 +72,24 @@ class AIService:
         最后使用openai的ChatCompletion API进行对话生成
         """
 
+        prompt4embedding=''
+        for prompt in prompts:
+            if prompt["role"] == "user":
+                prompt4embedding+=prompt['content']
+
         openai.api_key = os.getenv("OPENAI_API_KEY")
-        openai_embeddings = openai.Embedding.create(model=self.OPENAI_EMBEDDING_MODEL, input=prompt)
+        openai_embeddings = openai.Embedding.create(model=self.OPENAI_EMBEDDING_MODEL, input=prompt4embedding)
         logger.debug("embedding({0})=".format(openai_embeddings["data"][0]["embedding"]))
 
         search_result = QdrantService().search(query_vector=openai_embeddings["data"][0]["embedding"],limit=3 )
         answers = []
 
         """
-        因为提示词的长度有限，每个匹配的相关摘要我在这里只取了前1000个字符
+        因为提示词的长度有限，每个匹配的相关摘要我在这里只取了前500个字符
         """
         for result in search_result:
-            if len(result.payload["text"]) > 1000:
-                summary = result.payload["text"][:1000]
+            if len(result.payload["text"]) > 500:
+                summary = result.payload["text"][:500]
             else:
                 summary = result.payload["text"]
             answers.append({"resource_name": result.payload["resource_name"], "page_no": result.payload["page_no"],"text": summary})
@@ -93,7 +97,7 @@ class AIService:
         completion = openai.ChatCompletion.create(
             temperature=0.7,
             model="gpt-3.5-turbo",
-            messages=self.__make_completion_prompt(prompt, answers),
+            messages=self.__make_completion_prompt(prompts, answers),
         )
         result = completion.choices[0].message.content
         logger.debug("系统给的答案:{0}".format(result))
