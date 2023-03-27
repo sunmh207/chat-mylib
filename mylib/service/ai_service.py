@@ -69,7 +69,7 @@ class AIService:
         执行逻辑：
         首先使用openai的Embedding API将输入的文本转换为向量
         然后使用Qdrant的search API进行搜索，搜索结果中包含了向量和payload
-        payload中包含了title和text，title是疾病的标题，text是摘要
+        payload中包含了resource_name、page_no和text，resource_name是文件名,page_no是页码,text是内容
         最后使用openai的ChatCompletion API进行对话生成
         """
 
@@ -95,4 +95,6 @@ class AIService:
             model="gpt-3.5-turbo",
             messages=self.__make_completion_prompt(prompt, answers),
         )
-        return completion.choices[0].message.content
+        result = completion.choices[0].message.content
+        logger.debug("系统给的答案:{0}".format(result))
+        return result
