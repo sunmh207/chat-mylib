@@ -44,6 +44,10 @@ def upload_success_response(msg, summary):
 def homepage():
     return render_template('index.html')
 
+@app.route("/mobile")
+def mobile():
+    return render_template('mobile.html')
+
 @app.route("/upload", methods=['GET','POST'])
 def upload():
     if request.method == 'POST':
@@ -71,11 +75,8 @@ def upload():
             upload_error_response(msg = '未收到上传文件')
 
 @app.route('/completions', methods=['POST'])
-def search():
-    # question = request.form['question']
-    #获取json格式的数据
+def completions():
     prompts = request.get_json()
-    print(type(prompts))
     answer = AIService().make_completion(prompts)
     return answer
 
