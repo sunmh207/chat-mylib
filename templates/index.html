@@ -684,14 +684,18 @@
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onreadystatechange = function () {
               if (xhr.readyState === 4 && xhr.status === 200) {
-                console.log(xhr.responseText);
-                //将返回的答案存放到data里,以便下次一起发送
-                data.push({role: "assistant", content: xhr.responseText});
-                currentResEle = document.createElement("div");
-                currentResEle.className = "response markdown-body";
-                currentResEle.innerHTML = md.render(xhr.responseText);
-                chatlog.appendChild(currentResEle);
-                messagsEle.scrollTo(0, messagsEle.scrollHeight);
+                var response = JSON.parse(xhr.responseText);
+                if(response.status=="success"){
+                    //将返回的答案存放到data里,以便下次一起发送
+                    data.push({role: "assistant", content: response.data.answer});
+                    currentResEle = document.createElement("div");
+                    currentResEle.className = "response markdown-body";
+                    currentResEle.innerHTML = md.render(response.data.answer);
+                    chatlog.appendChild(currentResEle);
+                    messagsEle.scrollTo(0, messagsEle.scrollHeight);
+                }else{
+                    alert(response.data.message)
+                }
                 endAction();
               } else {
                 console.log('请求失败');
@@ -760,8 +764,8 @@
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
                         var res = JSON.parse(xhr.responseText);
-                        if(res.success == 1){
-                            var msg = "文件摘要："+res.summary;
+                        if(res.status == "success"){
+                            var msg = "文件摘要："+res.data.summary;
                             currentResEle = document.createElement("div");
                             currentResEle.className = "response markdown-body";
                             currentResEle.innerHTML = md.render(msg);
@@ -769,7 +773,7 @@
                             messagsEle.scrollTo(0, messagsEle.scrollHeight);
                             alert("文件上传成功");
                         }else{
-                            alert(res.message)
+                            alert(res.data.message)
                         }
                     } else {
                         alert('文件上传失败');

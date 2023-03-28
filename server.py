@@ -24,19 +24,11 @@ FLASK_PORT = config.getint('flask', 'port')
 
 #生成报错信息格式
 def upload_error_response(msg):
-    json_response = {
-        'success':  0,
-        'message': msg,
-        'summary': ''
-    }
+    json_response = {"status": "error", "data": {"message": msg,"summary":""}}
     return jsonify(json_response)
 #生成成功信息格式
 def upload_success_response(msg, summary):
-    json_response = {
-        'success': 1,
-        'message': msg,
-        'summary': summary
-    }
+    json_response = {"status": "success", "data": {"message": msg,"summary":summary}}
     return jsonify(json_response)
 
 
@@ -78,7 +70,7 @@ def upload():
 def completions():
     prompts = request.get_json()
     answer = AIService().make_completion(prompts)
-    return answer
+    return {"status":"success","data":{"message":"返回成功","answer":answer}}
 
 @app.route("/admin")
 def admin():
@@ -98,6 +90,13 @@ def delfiel():
     id = request.args.get('id')
     ResourceService().delete(id)
     return redirect(url_for('admin'))
+
+@app.route("/api/completions", methods=['POST'])
+def api_completions():
+    return completions()
+@app.route("/api/upload", methods=['POST'])
+def api_upload():
+    return upload()
 
 if __name__ == '__main__':
     app.run(host=FLASK_HOST, port=FLASK_PORT)
