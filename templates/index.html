@@ -14,27 +14,42 @@
 
         body {
             background-color: #edeff2;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
         }
 
         .chat_window {
             position: absolute;
-            width: calc(100% - 20px);
-            max-width: 1000px;
-            height: 800px;
-            border-radius: 10px;
+            width: 100%;
+            max-width: 1100px;
+            height: 100%;
+            max-height: 888px;
+            border-radius: 8px;
             background-color: #fff;
             left: 50%;
             top: 50%;
-            transform: translateX(-50%) translateY(-50%);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
             overflow: hidden;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
         }
 
         .top_menu {
-            background-color: #fff;
+            background-color: #f6f6f6;
             width: 100%;
-            padding: 20px 0 15px;
-            box-shadow: 0 1px 30px rgba(0, 0, 0, 0.1);
+            height: 50px;
+            padding: 12px 0;
+        }
+
+        .top_menu .toggler {
+            position: absolute;
+            left: 15px;
+            top: 5px;
+            width: 40px;
+            height: 40px;
+            padding: 5px 7px;
+            border-radius: 4px;
+            cursor: pointer;
         }
 
         .top_menu .buttons {
@@ -376,10 +391,10 @@
             display: none;
         }
 
-        .upload {
+        #upload {
             position: absolute;
             right: 10px;
-            top: 22px;
+            top: 12px;
             color: gray;
         }
 
@@ -478,7 +493,7 @@
                     <div class="button maximize"></div>
                 </div>
                 <div class="title">基于OpenAI的私有资料库</div>
-                <div class="upload">
+                <div id="upload">
                     <label for="fileInput"> 上传资料</label>
                     <input type="file" id="fileInput" style="display:none;">
                     <label onclick="gotoAdmin()">｜资料列表</label>
@@ -538,8 +553,8 @@
     <script src="http://cdn.staticfile.org/KaTeX/0.16.4/katex.min.js"></script>
     <link rel="stylesheet" href="http://npm.elemecdn.com/markdown-it-texmath@1.0.0/css/texmath.css">
     <script src="http://npm.elemecdn.com/markdown-it-texmath@1.0.0/texmath.js"></script>
-    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>-->
+<!--    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
     <script>
         const API_URL = "/completions";
         const messagsEle = document.getElementsByClassName("messages")[0];
