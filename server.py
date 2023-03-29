@@ -91,9 +91,12 @@ def delfiel():
     ResourceService().delete(id)
     return redirect(url_for('admin'))
 
+#completions对外接口,与completions相同,仅路由不同
 @app.route("/api/completions", methods=['POST'])
 def api_completions():
     return completions()
+
+#upload对外接口,与upload相同,仅路由不同
 @app.route("/api/upload", methods=['POST'])
 def api_upload():
     return upload()

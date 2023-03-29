@@ -497,6 +497,7 @@
                     <label for="fileInput"> 上传资料</label>
                     <input type="file" id="fileInput" style="display:none;">
                     <label onclick="gotoAdmin()">｜资料列表</label>
+                    <label onclick="feedback()">｜反馈</label>
                 </div>
             </div>
             <ul class="messages">
@@ -553,8 +554,6 @@
     <script src="http://cdn.staticfile.org/KaTeX/0.16.4/katex.min.js"></script>
     <link rel="stylesheet" href="http://npm.elemecdn.com/markdown-it-texmath@1.0.0/css/texmath.css">
     <script src="http://npm.elemecdn.com/markdown-it-texmath@1.0.0/texmath.js"></script>
-<!--    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>-->
-<!--    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
     <script>
         const API_URL = "/completions";
         const messagsEle = document.getElementsByClassName("messages")[0];
@@ -786,8 +785,11 @@
             xhr.send(formData);
         }
 
-        function gotoAdmin(){
-            window.location.href="/admin";
+        const gotoAdmin = function(){
+            window.open("/admin","_blank");
+        }
+        const feedback = function(){
+             window.open("https://support.qq.com/product/538086","_blank");
         }
         //发送按钮点击事件
         sendBtnEle.onclick = genFunc;
@@ -811,6 +813,8 @@
             loading.style.display = "none";
             overlay.style.display = "none";
         }
+
+
     </script>
 </body>
 
