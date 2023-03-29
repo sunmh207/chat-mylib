@@ -62,3 +62,5 @@ PC端: [http://www.chatmylib.xyz](http://www.chatmylib.xyz)
 ## 备注
 
 本软件前端页面引用了 [xqdoo00o/chatgpt-web](https://github.com/xqdoo00o/chatgpt-web) 的部分代码。
+
+给产品提意见和建议点击这里：[反馈](https://support.qq.com/product/538086)
