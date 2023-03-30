@@ -49,7 +49,7 @@
           // 填充用户列表
           for (var i = 0; i < data.items.length; i++) {
             var resource = data.items[i];
-            var row = '<tr><td>' + resource.id + '</td><td>' + resource.name + '</td><td>' + resource.updated_time + '</td><td> <a href="#" onclick=confirmDel("'+ resource.id + '")>删除</a></td></tr>';
+            var row = '<tr><td>' + resource.id + '</td><td>' + resource.name + '</td><td width="200">' + resource.updated_time + '</td><td width="65"> <a href="#" onclick=confirmDel("'+ resource.id + '")>删除</a></td></tr>';
             $('#file-table tbody').append(row);
           }
 
