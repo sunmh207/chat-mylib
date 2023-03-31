@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 import hashlib
 from openai import OpenAIError
-from flask import Flask, render_template, request, jsonify,redirect, url_for
-from mylib.service.file_parser import FileParser
+from flask import Flask, render_template, request, jsonify,redirect, url_for,send_from_directory
 from mylib.service.exception import BaseException
 from mylib.service.ai_service import AIService
 from mylib.service.resource_service import ResourceService
-# from service.utils import LibTookit
-# from service.file import FileStruct
+
 import os
 from configparser import ConfigParser
 
@@ -100,6 +98,11 @@ def api_completions():
 @app.route("/api/upload", methods=['POST'])
 def api_upload():
     return upload()
+
+#设置icon
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), './imgs/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
     app.run(host=FLASK_HOST, port=FLASK_PORT)
