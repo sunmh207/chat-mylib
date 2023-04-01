@@ -10,7 +10,7 @@ from qdrant_client.http.models import PointStruct
 from mylib.service.ai_service import AIService
 
 class ResourceService:
-    def upsert(self,file_path, resource_name='') ->Resource:
+    def upsert(self,file_path, resource_id, resource_name='') ->Resource:
         """
         解析file_path文件内容,并存储起来(同时存储到MySQL 和 Qdrant). 通过文件内容到MD5得到ID值，如果ID重复则更新，确保同样的文件不会保留两份。
         :param file_path:
@@ -18,7 +18,8 @@ class ResourceService:
         """
         #解析文件内容
         file_struct = FileParser().parse(file_path)
-        resource_id = file_struct.full_text_md5
+        # resource_id = file_struct.full_text_md5
+        resource_id = resource_id
         resource_type = file_struct.type
         resource_summay = AIService().make_summary(file_struct.full_text)
 
@@ -61,6 +62,23 @@ class ResourceService:
             # 创建索引
             qdrant_service.upsert(point)
         return Resource(id=resource_id, name=resource_name, summary=resource_summay,type=resource_type,created_time=time.time(), updated_time=time.time())
+
+    def count(self)->int:
+        # 存储到mysql数据库
+        conn = MySQLService().get_connection()
+        cursor = conn.cursor()
+
+        # 判断resource是否存在
+        query_sql = "select count(*) as cnt from resource "
+        cursor.execute(query_sql)
+
+        # 获取查询结果
+        result = cursor.fetchone()
+        # 关闭数据库连接
+        cursor.close()
+        conn.close()
+        # 返回查询结果
+        return result[0]
 
     def list(self, start, limit)->[Resource]:
         resources = []

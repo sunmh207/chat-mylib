@@ -9,7 +9,11 @@ from mylib.service.resource_service import ResourceService
 import os
 from configparser import ConfigParser
 
+def splitext(value):
+    return os.path.splitext(value)[1]
+
 app = Flask(__name__)
+app.add_template_filter(splitext)
 app.debug = True  # 开启debug模式
 
 config = ConfigParser()
@@ -54,7 +58,7 @@ def upload():
             print('收到上传文件:origon name=', file.filename, ', 保存后名称=', uuid_filename)
 
             try:
-                resource = ResourceService().upsert(file_path,file.filename)
+                resource = ResourceService().upsert(file_path=file_path, resource_id=id,resource_name = file.filename)
             except BaseException as e:
                 return upload_error_response(msg = e.message)
             except OpenAIError as openaie:
@@ -72,22 +76,30 @@ def completions():
 
 @app.route("/admin")
 def admin():
-    return render_template('admin/index.html')
+    # 获取当前页数，默认为第一页
+    page = int(request.args.get('page', 1))
+    page_size = 30
+    # 计算起始索引和结束索引
+    start = (page - 1) * page_size
+    #总记录数
+    total = ResourceService().count()
+    #总页数
+    total_pages = (total + page_size -1) // page_size
 
-@app.route("/files")
-def files():
-    offset = 0
-    limit =300
-    resources =  ResourceService().list(offset,limit)
-    return {
-        "items":resources,
-    }
+    resources = ResourceService().list(start, page_size)
+    return render_template('admin/index.html',resources=resources,page=page, total_pages=total_pages)
 
 @app.route("/delfile", methods=['GET','POST'])
 def delfiel():
     id = request.args.get('id')
     ResourceService().delete(id)
     return redirect(url_for('admin'))
+
+#预览
+@app.route('/preview/<path:filename>')
+def show(filename):
+    return send_from_directory(os.path.join(app.root_path, 'upload'), filename)
+
 
 #completions对外接口,与completions相同,仅路由不同
 @app.route("/api/completions", methods=['POST'])
