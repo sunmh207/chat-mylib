@@ -8,6 +8,7 @@ import time
 import openai
 from qdrant_client.http.models import PointStruct
 from mylib.service.ai_service import AIService
+import os
 
 class ResourceService:
     def upsert(self,file_path, resource_id, resource_name='') ->Resource:
@@ -104,9 +105,22 @@ class ResourceService:
             logger.error("从MySQL中读取Resource失败")
 
     def delete(self, id):
-        # 从mysql数据库中删除
+        #查询资源信息
         conn = MySQLService().get_connection()
         cursor = conn.cursor()
+        query = 'SELECT name FROM resource where id=%s LIMIT 1'
+        cursor.execute(query, id)
+        result = cursor.fetchone()
+        filename = result[0]
+        ext = os.path.splitext(filename)[1]
+        file_uuid_name =id+ext
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(current_dir, '../../upload',file_uuid_name)
+        #删除文件
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+        # 从mysql数据库中删除
         sql = "delete from resource where id = %s"
         try:
             cursor.execute(sql, id)
@@ -118,3 +132,4 @@ class ResourceService:
 
         #从qdrant中删除
         QdrantService().delete_by_resource_id(id)
+
