@@ -129,10 +129,21 @@ const sendPrompt = async () => {
         var response = JSON.parse(xhr.responseText);
         if(response.status=="success"){
             //将返回的答案存放到data里,以便下次一起发送
-            data.push({role: "assistant", content: response.data.answer});
+            data.push({role: "assistant", content: response.data.result.message});
             currentResEle = document.createElement("div");
             currentResEle.className = "response markdown-body";
-            currentResEle.innerHTML = md.render(response.data.answer);
+            var answer = response.data.result.message;
+            var refs = response.data.result.refs;
+            console.log(refs);
+            var link ="参考资源:";
+            if (refs && Array.isArray(refs)) {
+              refs.forEach(function(element) {
+                console.log(element);
+                link = link + "<a href='/preview/"+element.resource_id+"' target=_blank>"+element.resource_name+"</a>| ";
+              });
+            }
+            console.log(link);
+            currentResEle.innerHTML = md.render(response.data.result.message)+link;
             chatlog.appendChild(currentResEle);
             messagsEle.scrollTo(0, messagsEle.scrollHeight);
         }else{

@@ -40,17 +40,17 @@ class AIService:
         return completion.choices[0].message.content
 
 
-    def __make_completion_prompt(self, prompts, answers):
+    def __make_completion_prompt(self, prompts, ref_pages):
         # system = '你是一个问答机器人'
         user_prompt1='我给你提供以下几份资料\n'
 
         user_prompt2 = ""
         # 带有索引的格式
-        for index, answer in enumerate(answers):
+        for index, ref_page in enumerate(ref_pages):
             user_prompt2 += '第' + str(index+1) +'份资料\n'\
-                + '资料名称:《'+ answer['resource_name'] +'》\n' \
-                + '所在页码:第' + str(answer['page_no'] + 1)+'页\n' \
-                + '资料内容:' + str(answer['text']) + '\n'
+                + '资料名称:《'+ ref_page['resource_name'] +'》\n' \
+                + '所在页码:第' + str(ref_page['page_no'] + 1)+'页\n' \
+                + '资料内容:' + str(ref_page['text']) + '\n'
         user_prompt3 = "请根据上述资料，回答下面的问题,不超过300字，如果必要，请给出相关资料的名称、页码和章节信息。\n"
 
         post_prompts = [
@@ -70,6 +70,15 @@ class AIService:
         然后使用Qdrant的search API进行搜索，搜索结果中包含了向量和payload
         payload中包含了resource_name、page_no和text，resource_name是文件名,page_no是页码,text是内容
         最后使用openai的ChatCompletion API进行对话生成
+
+        返回值:
+        {
+            "message":"....",
+            "refs":[
+                {"resource_id":"","resource_name":""},
+                {...}
+            ]
+        }
         """
 
         prompt4embedding=''
@@ -82,7 +91,8 @@ class AIService:
         logger.debug("embedding({0})=".format(openai_embeddings["data"][0]["embedding"]))
 
         search_result = QdrantService().search(query_vector=openai_embeddings["data"][0]["embedding"],limit=3 )
-        answers = []
+        ref_pages = []
+        ref_resources = []
 
         """
         因为提示词的长度有限，每个匹配的相关摘要我在这里只取了前500个字符
@@ -92,13 +102,20 @@ class AIService:
                 summary = result.payload["text"][:500]
             else:
                 summary = result.payload["text"]
-            answers.append({"resource_name": result.payload["resource_name"], "page_no": result.payload["page_no"],"text": summary})
+            ref_pages.append({"resource_name": result.payload["resource_name"], "page_no": result.payload["page_no"],"text": summary})
+            #去重(不包含资源，则加进去)
+            if not any(item["resource_id"] == result.payload["resource_id"] for item in ref_resources):
+                ref_resources.append({"resource_id": result.payload["resource_id"],"resource_name": result.payload["resource_name"]})
 
         completion = openai.ChatCompletion.create(
             temperature=0.7,
             model="gpt-3.5-turbo",
-            messages=self.__make_completion_prompt(prompts, answers),
+            messages=self.__make_completion_prompt(prompts, ref_pages),
         )
-        result = completion.choices[0].message.content
-        logger.debug("系统给的答案:{0}".format(result))
+        message = completion.choices[0].message.content
+        logger.debug("系统给的答案:{0}".format(message))
+        result = {
+            "message":message,
+            "refs":ref_resources
+        }
         return result

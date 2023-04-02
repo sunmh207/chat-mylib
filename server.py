@@ -71,8 +71,8 @@ def upload():
 @app.route('/completions', methods=['POST'])
 def completions():
     prompts = request.get_json()
-    answer = AIService().make_completion(prompts)
-    return {"status":"success","data":{"message":"返回成功","answer":answer}}
+    result = AIService().make_completion(prompts)
+    return {"status":"success","data":{"message":"返回成功","result":result}}
 
 @app.route("/admin")
 def admin():
@@ -96,8 +96,11 @@ def delfiel():
     return redirect(url_for('admin'))
 
 #预览
-@app.route('/preview/<path:filename>')
-def show(filename):
+@app.route('/preview/<string:resource_id>')
+def show(resource_id):
+    resource = ResourceService().get(resource_id)
+    basename, ext = os.path.splitext(resource.name)
+    filename = resource.id + ext
     return send_from_directory(os.path.join(app.root_path, 'upload'), filename)
 
 

@@ -80,6 +80,20 @@ class ResourceService:
         conn.close()
         # 返回查询结果
         return result[0]
+    def get(self,id):
+        conn = MySQLService().get_connection()
+        cursor = conn.cursor()
+        sql = "select id, name, summary, type, created_time, updated_time from resource where id=%s"
+        cursor.execute(sql,(id))
+        row = cursor.fetchone()
+        return Resource(
+            id= row[0],
+            name=row[1],
+            summary=row[2],
+            type=row[3],
+            created_time=row[4],
+            updated_time=row[5]
+        )
 
     def list(self, start, limit)->[Resource]:
         resources = []
