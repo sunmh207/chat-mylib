@@ -26,7 +26,7 @@ class AIService:
         """
         给text生成摘要
         :param text:
-        :return:
+        :return: 摘要文字
         """
 
         #completion接口输入不能超过4097个token

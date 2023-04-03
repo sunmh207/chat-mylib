@@ -134,7 +134,7 @@ const sendPrompt = async () => {
       if (result.status === "success") {
         const answer = result.data.result.message;
         const refs = result.data.result.refs;
-        let link = "参考资源:";
+        let link = "参考资料:";
         if (Array.isArray(refs)) {
           link += refs.map((ref, index) => {
             const href = `/preview/${ref.resource_id}`;
