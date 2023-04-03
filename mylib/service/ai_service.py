@@ -5,17 +5,16 @@ import os
 from mylib.service.log import logger
 
 class AIService:
-    config = ConfigParser()
-    config.read('.env')
+    def __init__(self):
+        self.config = ConfigParser()
+        self.config.read('.env')
+        self.QDRANT_IP = self.config.get('qdrant', 'ip')
+        self.QDRANT_PORT = self.config.getint('qdrant', 'port')
+        self.COLLECTION_NAME = self.config.get('qdrant', 'collection_name')
+        self.OPENAI_EMBEDDING_MODEL = "text-embedding-ada-002"
+        self.VECTOR_SIZE = 1536
+        self.OPENAI_CHAT_COMPLETION_MODEL = "gpt-3.5-turbo"
 
-    QDRANT_IP = config.get('qdrant', 'ip')
-    QDRANT_PORT = config.getint('qdrant', 'port')
-    COLLECTION_NAME = config.get('qdrant', 'collection_name')
-
-    OPENAI_EMBEDDING_MODEL = "text-embedding-ada-002"
-    VECTOR_SIZE = 1536
-
-    OPENAI_CHAT_COMPLETION_MODEL = "gpt-3.5-turbo"
     def __make_summary_prompt(self, text):
         q = "请对以下内容写一段简短对摘要. \n" + text
         return [
@@ -41,9 +40,7 @@ class AIService:
 
 
     def __make_completion_prompt(self, prompts, ref_pages):
-        # system = '你是一个问答机器人'
         user_prompt1='我给你提供以下几份资料\n'
-
         user_prompt2 = ""
         # 带有索引的格式
         for index, ref_page in enumerate(ref_pages):
@@ -52,9 +49,7 @@ class AIService:
                 + '所在页码:第' + str(ref_page['page_no'] + 1)+'页\n' \
                 + '资料内容:' + str(ref_page['text']) + '\n'
         user_prompt3 = "请根据上述资料，回答下面的问题,不超过300字，如果必要，请给出相关资料的名称、页码和章节信息。\n"
-
         post_prompts = [
-            # {'role': 'system', 'content': system},
             {'role': 'user', 'content': user_prompt1},
             {'role': 'user', 'content': user_prompt2},
             {'role': 'user', 'content': user_prompt3},
