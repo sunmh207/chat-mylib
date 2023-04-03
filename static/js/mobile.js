@@ -115,39 +115,49 @@ let lastStr = "";
 
 //向服务器发送请求
 const sendPrompt = async () => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', API_URL,true);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        var response = JSON.parse(xhr.responseText);
-        if(response.status=="success"){
-            //将返回的答案存放到data里,以便下次一起发送
-            data.push({role: "assistant", content: response.data.result.message});
-            currentResEle = document.createElement("div");
-            currentResEle.className = "response markdown-body";
-            var answer = response.data.result.message;
-            var refs = response.data.result.refs;
-            var link ="参考资源:";
-            if (refs && Array.isArray(refs)) {
-              refs.forEach(function(element) {
-                link = link + "<a href='/preview/"+element.resource_id+"' target=_blank>"+element.resource_name+"</a>| ";
-              });
-            }
-            currentResEle.innerHTML = md.render(response.data.result.message)+link;
-            chatlog.appendChild(currentResEle);
-            messagsEle.scrollTo(0, messagsEle.scrollHeight);
-        }else{
-            alert(response.data.message)
+  try {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    if (response.ok) {
+      const result = await response.json();
+      if (result.status === "success") {
+        const answer = result.data.result.message;
+        const refs = result.data.result.refs;
+        let link = "参考资源:";
+        if (Array.isArray(refs)) {
+          link += refs.map((ref, index) => {
+            const href = `/preview/${ref.resource_id}`;
+            const separator = (index === refs.length - 1) ? "" : "| ";
+            return `<a href="${href}" target="_blank">${ref.resource_name}</a>${separator}`;
+          }).join("");
         }
-        endAction();
+        data.push({
+          role: "assistant",
+          content: answer
+        });
+        currentResEle = document.createElement("div");
+        currentResEle.className = "response markdown-body";
+        currentResEle.innerHTML = `${md.render(answer)}${link}`;
+        chatlog.appendChild(currentResEle);
+        messagsEle.scrollTo(0, messagsEle.scrollHeight);
       } else {
-        console.log('请求失败');
+        alert(result.data.message);
       }
-    };
-    xhr.send(JSON.stringify(data));
+      endAction();
+    } else {
+      endAction();
+      alert('请求失败');
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
-}
 const generateText = (message) => {
     loading = true;
     sendBtnEle.disabled = true;
@@ -162,6 +172,7 @@ const generateText = (message) => {
     messagsEle.scrollTo(0, messagsEle.scrollHeight);
     sendPrompt();
 };
+
 textarea.onkeydown = (event) => {
     if (event.keyCode === 13) {
         if (!event.shiftKey) {
