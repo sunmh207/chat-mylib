@@ -4,6 +4,7 @@ from mylib.service.qdrant_service import QdrantService
 import os
 from mylib.service.log import logger
 
+
 class AIService:
     def __init__(self):
         self.config = ConfigParser()
@@ -28,8 +29,8 @@ class AIService:
         :return: 摘要文字
         """
 
-        #completion接口输入不能超过4097个token
-        if (len(text) > 2000):
+        # completion接口输入不能超过4097个token
+        if len(text) > 2000:
             text = text[:2000]
         completion = openai.ChatCompletion.create(
             temperature=0.7,
@@ -38,16 +39,15 @@ class AIService:
         )
         return completion.choices[0].message.content
 
-
     def __make_completion_prompt(self, prompts, ref_pages):
-        user_prompt1='我给你提供以下几份资料\n'
+        user_prompt1 = '我给你提供以下几份资料\n'
         user_prompt2 = ""
         # 带有索引的格式
         for index, ref_page in enumerate(ref_pages):
-            user_prompt2 += '第' + str(index+1) +'份资料\n'\
-                + '资料名称:《'+ ref_page['resource_name'] +'》\n' \
-                + '所在页码:第' + str(ref_page['page_no'] + 1)+'页\n' \
-                + '资料内容:' + str(ref_page['text']) + '\n'
+            user_prompt2 += '第' + str(index + 1) + '份资料\n' \
+                            + '资料名称:《' + ref_page['resource_name'] + '》\n' \
+                            + '所在页码:第' + str(ref_page['page_no'] + 1) + '页\n' \
+                            + '资料内容:' + str(ref_page['text']) + '\n'
         user_prompt3 = "请根据上述资料，回答下面的问题,不超过300字，如果必要，请给出相关资料的名称、页码和章节信息。\n"
         post_prompts = [
             {'role': 'user', 'content': user_prompt1},
@@ -58,7 +58,7 @@ class AIService:
         logger.debug("组装后的prompt:{0}".format(post_prompts))
         return post_prompts
 
-    def make_completion(self, prompts:list):
+    def make_completion(self, prompts: list):
         """
         执行逻辑：
         首先使用openai的Embedding API将输入的文本转换为向量
@@ -76,16 +76,16 @@ class AIService:
         }
         """
 
-        prompt4embedding=''
+        prompt4embedding = ''
         for prompt in prompts:
             if prompt["role"] == "user":
-                prompt4embedding+=prompt['content']
+                prompt4embedding += prompt['content']
 
         openai.api_key = os.getenv("OPENAI_API_KEY")
         openai_embeddings = openai.Embedding.create(model=self.OPENAI_EMBEDDING_MODEL, input=prompt4embedding)
         logger.debug("embedding({0})=".format(openai_embeddings["data"][0]["embedding"]))
 
-        search_result = QdrantService().search(query_vector=openai_embeddings["data"][0]["embedding"],limit=3 )
+        search_result = QdrantService().search(query_vector=openai_embeddings["data"][0]["embedding"], limit=3)
         ref_pages = []
         ref_resources = []
 
@@ -97,10 +97,12 @@ class AIService:
                 summary = result.payload["text"][:500]
             else:
                 summary = result.payload["text"]
-            ref_pages.append({"resource_name": result.payload["resource_name"], "page_no": result.payload["page_no"],"text": summary})
-            #去重(不包含资源，则加进去)
+            ref_pages.append({"resource_name": result.payload["resource_name"], "page_no": result.payload["page_no"],
+                              "text": summary})
+            # 去重(不包含资源，则加进去)
             if not any(item["resource_id"] == result.payload["resource_id"] for item in ref_resources):
-                ref_resources.append({"resource_id": result.payload["resource_id"],"resource_name": result.payload["resource_name"]})
+                ref_resources.append(
+                    {"resource_id": result.payload["resource_id"], "resource_name": result.payload["resource_name"]})
 
         completion = openai.ChatCompletion.create(
             temperature=0.7,
@@ -110,7 +112,7 @@ class AIService:
         message = completion.choices[0].message.content
         logger.debug("系统给的答案:{0}".format(message))
         result = {
-            "message":message,
-            "refs":ref_resources
+            "message": message,
+            "refs": ref_resources
         }
         return result
