@@ -54,9 +54,9 @@ def upload():
         file = request.files['file']
         if file:
             content = file.read()
-            res_id = hashlib.md5(content).hexdigest()
+            resource_id = hashlib.md5(content).hexdigest()
             basename, ext = os.path.splitext(file.filename)
-            uuid_filename = res_id + ext
+            uuid_filename = resource_id + ext
             # 保存文件到指定目录
             file_path = os.path.join(os.getcwd(), UPLOAD_DIR, uuid_filename)
             file.seek(0)
@@ -64,7 +64,7 @@ def upload():
             print('收到上传文件:origin name=', file.filename, ', 保存后名称=', uuid_filename)
 
             try:
-                resource = ResourceService().upsert(file_path=file_path, resource_id=id, resource_name=file.filename)
+                resource = ResourceService().upsert(file_path=file_path, resource_id=resource_id, resource_name=file.filename)
             except BaseException as e:
                 return upload_error_response(msg=e.message)
             except OpenAIError as openai_e:
