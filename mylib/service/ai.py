@@ -1,8 +1,10 @@
-from configparser import ConfigParser
-import openai
-from mylib.service.qdrant_service import QdrantService
 import os
+from configparser import ConfigParser
+
+import openai
+
 from mylib.service.log import logger
+from mylib.service.qdrant import QdrantService
 
 
 class AIService:

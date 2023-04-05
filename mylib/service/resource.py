@@ -1,14 +1,16 @@
-from mylib.entity.resource import Resource
-from mylib.service.file_parser import FileParser
-from mylib.service.mysql_service import MySQLService
-from mylib.service.log import logger
-from mylib.service.qdrant_service import QdrantService
 import hashlib
+import os
 import time
+
 import openai
 from qdrant_client.http.models import PointStruct
-from mylib.service.ai_service import AIService
-import os
+
+from mylib.model.resource import Resource
+from mylib.service.ai import AIService
+from mylib.service.file_parser import FileParser
+from mylib.service.log import logger
+from mylib.service.mysql import MySQLService
+from mylib.service.qdrant import QdrantService
 
 
 class ResourceService:

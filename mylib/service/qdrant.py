@@ -1,8 +1,11 @@
 from configparser import ConfigParser
-from qdrant_client import QdrantClient
-from qdrant_client.http.models import Distance, VectorParams, PointStruct, models
 from typing import List
+
+from qdrant_client import QdrantClient
 from qdrant_client.conversions import common_types as types
+from qdrant_client.http.models import (Distance, PointStruct, VectorParams,
+                                       models)
+
 from mylib.service.log import logger
 
 

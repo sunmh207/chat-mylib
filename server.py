@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 import hashlib
-from openai import OpenAIError
-from flask import Flask, render_template, request, jsonify, redirect, url_for, send_from_directory
-from mylib.service.exception import BaseException
-from mylib.service.ai_service import AIService
-from mylib.service.resource_service import ResourceService
-
 import os
 from configparser import ConfigParser
+
+from flask import (Flask, jsonify, redirect, render_template, request,
+                   send_from_directory, url_for)
+from openai import OpenAIError
+
+from mylib.service.ai import AIService
+from mylib.service.exception import BaseException
+from mylib.service.resource import ResourceService
 
 
 def splitext(value):
@@ -136,4 +138,3 @@ def favicon():
 if __name__ == '__main__':
     app.run(host=FLASK_HOST, port=FLASK_PORT)
 
-# Determine whether the sentiment of text is positive

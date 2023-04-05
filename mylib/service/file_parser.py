@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import os
-import PyPDF2
-import docx
-from mylib.service.exception import BaseException, ExceededMaxPagesError, ExceededMaxWordsError, UnsupportedError
-import openpyxl
 import hashlib
+import os
+
+import docx
+import openpyxl
+import PyPDF2
+
+from mylib.service.exception import (BaseException, ExceededMaxPagesError,
+                                     ExceededMaxWordsError, UnsupportedError)
 
 
 class FileStruct:
