@@ -12,6 +12,7 @@ from mylib.service.ai import AIService
 from mylib.service.exception import BaseException
 from mylib.service.resource import ResourceService
 from mylib.service.dingtalk import DingtalkService
+from mylib.service.log import logger
 
 
 def splitext(value):
@@ -141,14 +142,12 @@ def favicon():
                                mimetype='image/vnd.microsoft.icon')
 
 
-@app.route("/dingtalkbot", methods=["POST","GET"])
+@app.route("/dingtalkbot", methods=["POST"])
 def dingtalkbot():
-    if request.method == 'GET':
-        return "ok"
     message = json.loads(request.get_data())
     timestamp = request.headers.get('timestamp')
     sign = request.headers.get('sign')
-
+    logger.debug(message)
     dingtalk_service = DingtalkService(DINGTALK_WEBHOOK_URL,DINGTALK_SECRET)
     if dingtalk_service.verify(sign, timestamp):
         # 签名验证通过，处理消息
