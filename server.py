@@ -163,7 +163,7 @@ def dingtalkbot():
         #回答问题
         prompts=[{"role":"user","content":msg_content}]
         answer = AIService().make_completion(prompts)
-        dingtalk_service.send(answer)
+        dingtalk_service.send(answer['message'])
         return jsonify({'msg': 'success'})
     else:
         # 签名验证失败，不处理消息
