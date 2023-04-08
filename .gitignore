@@ -1,6 +1,5 @@
 #忽略目录
 venv
-docs
 __pycache__
 .idea
 test
