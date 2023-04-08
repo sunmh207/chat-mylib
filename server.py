@@ -29,6 +29,10 @@ UPLOAD_DIR = config.get('storage', 'upload_dir')
 FLASK_HOST = config.get('flask', 'host')
 FLASK_PORT = config.getint('flask', 'port')
 
+DINGTALK_WEBHOOK_URL = config.getint('dingtalk', 'webhook_url')
+DINGTALK_SECRET = config.getint('dingtalk', 'secret')
+
+
 
 # 生成报错信息格式
 def upload_error_response(msg):
@@ -144,7 +148,8 @@ def dingtalkbot():
     message = json.loads(request.get_data())
     timestamp = request.headers.get('timestamp')
     sign = request.headers.get('sign')
-    dingtalk_service = DingtalkService()
+
+    dingtalk_service = DingtalkService(DINGTALK_WEBHOOK_URL,DINGTALK_SECRET)
     if dingtalk_service.verify(sign, timestamp):
         # 签名验证通过，处理消息
         sender_nick = message['senderNick']
@@ -155,7 +160,8 @@ def dingtalkbot():
             msg_content = message['markdown']['title'] + '\n' + message['markdown']['text']
         else:
             msg_content = 'unknown message type'
-        # TODO: 根据问题回答
+
+        #回答问题
         prompts=[{"role":"user","content":msg_content}]
         answer = AIService().make_completion(prompts)
         dingtalk_service.send(answer)
