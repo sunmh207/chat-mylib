@@ -29,8 +29,8 @@ UPLOAD_DIR = config.get('storage', 'upload_dir')
 FLASK_HOST = config.get('flask', 'host')
 FLASK_PORT = config.getint('flask', 'port')
 
-DINGTALK_WEBHOOK_URL = config.getint('dingtalk', 'webhook_url')
-DINGTALK_SECRET = config.getint('dingtalk', 'secret')
+DINGTALK_WEBHOOK_URL = config.get('dingtalk', 'webhook_url')
+DINGTALK_SECRET = config.get('dingtalk', 'secret')
 
 
 
