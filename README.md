@@ -65,6 +65,15 @@ PC端: [http://www.chatmylib.xyz](http://www.chatmylib.xyz)
 
 手机端: [http://www.chatmylib.xyz/mobile](http://www.chatmylib.xyz/mobile)
 
+
+## 对接钉钉机器人
+将问答系统对接到内部钉钉群里，通过 @机器人 与之对话，获得资料信息。效果如下图：
+
+![图片](docs/imgs/dingtalk/10.png)
+
+配置步骤见 [对接钉钉机器人](docs/dingtalk_integration_guide.md)
+
+
 ## 备注
 
 本软件前端页面引用了 [xqdoo00o/chatgpt-web](https://github.com/xqdoo00o/chatgpt-web) 的部分代码。
@@ -72,42 +81,3 @@ PC端: [http://www.chatmylib.xyz](http://www.chatmylib.xyz)
 给产品提意见和建议点击这里：<a href="https://support.qq.com/product/538086" target="_blank">反馈</a>
 
 联系作者: 发邮件到 12060198@qq.com
-
-## 对接钉钉机器人
-
-### 创建机器人应用
-
-* 访问钉钉后台： https://open-dev.dingtalk.com/fe/app#/corp/robot ， 创建应用
-![图片](docs/imgs/dingtalk/1.png)
-
-* 填写机器人信息 
-![图片](docs/imgs/dingtalk/2.png)
-
-* 记录应用信息中的 AppSecret
-![图片](docs/imgs/dingtalk/3.png)
-
-* 填写服务器出口IP和消息接收地址
-
-接收地址为 http://<host>:<port>/dingtalkbot
-
-![图片](docs/imgs/dingtalk/4.png)
-
-* 上线机器人
-
-![图片](docs/imgs/dingtalk/5.png)
-
-* 找一个钉钉内部群，【设置】-【智能群助手】
-
-![图片](docs/imgs/dingtalk/6.png)
-
-* 添加刚创建的机器人
-
-![图片](docs/imgs/dingtalk/7.png)
-
-* 记录Webhook地址，填写IP段和POST地址
-
-其中POST地址为：http://<host>:<port>/dingtalkbot
-![图片](docs/imgs/dingtalk/8.png)
-![图片](docs/imgs/dingtalk/9.png)
-
-* 上述步骤完成后，在群可以看到机器人。@机器人，并问它问题即可。
