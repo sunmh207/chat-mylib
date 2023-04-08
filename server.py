@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import hashlib
 import os
+import json
 from configparser import ConfigParser
 
 from flask import (Flask, jsonify, redirect, render_template, request,
@@ -10,6 +11,7 @@ from openai import OpenAIError
 from mylib.service.ai import AIService
 from mylib.service.exception import BaseException
 from mylib.service.resource import ResourceService
+from mylib.service.dingtalk import DingtalkService
 
 
 def splitext(value):
@@ -134,6 +136,33 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), './imgs/favicon.ico',
                                mimetype='image/vnd.microsoft.icon')
 
+
+@app.route("/dingtalkbot", methods=["POST","GET"])
+def dingtalkbot():
+    if request.method == 'GET':
+        return "ok"
+    message = json.loads(request.get_data())
+    timestamp = request.headers.get('timestamp')
+    sign = request.headers.get('sign')
+    dingtalk_service = DingtalkService()
+    if dingtalk_service.verify(sign, timestamp):
+        # 签名验证通过，处理消息
+        sender_nick = message['senderNick']
+        msg_type = message['msgtype']
+        if msg_type == 'text':
+            msg_content = message['text']['content']
+        elif msg_type == 'markdown':
+            msg_content = message['markdown']['title'] + '\n' + message['markdown']['text']
+        else:
+            msg_content = 'unknown message type'
+        # TODO: 根据问题回答
+        prompts=[{"role":"user","content":msg_content}]
+        answer = AIService().make_completion(prompts)
+        dingtalk_service.send(answer)
+        return jsonify({'msg': 'success'})
+    else:
+        # 签名验证失败，不处理消息
+        return jsonify({'msg': 'signature error'}, status=401)
 
 if __name__ == '__main__':
     app.run(host=FLASK_HOST, port=FLASK_PORT)
