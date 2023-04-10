@@ -81,3 +81,9 @@ PC端: [http://www.chatmylib.xyz](http://www.chatmylib.xyz)
 给产品提意见和建议点击这里：<a href="https://support.qq.com/product/538086" target="_blank">反馈</a>
 
 联系作者: 发邮件到 12060198@qq.com
+
+## FAQ
+
+[服务器无法访问https://api.openai.com/v1 怎么办？](docs/faq/openai_api_base.md)
+
+ 
