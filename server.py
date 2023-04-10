@@ -7,7 +7,10 @@ from configparser import ConfigParser
 from flask import (Flask, jsonify, redirect, render_template, request,
                    send_from_directory, url_for)
 from openai import OpenAIError
+import openai
 
+from mylib.service.log import logger
+from mylib.service.qdrant import QdrantService
 from mylib.service.ai import AIService
 from mylib.service.exception import BaseException
 from mylib.service.resource import ResourceService
@@ -168,6 +171,26 @@ def dingtalkbot():
     else:
         # 签名验证失败，不处理消息
         return jsonify({'msg': 'signature error'}, status=401)
+
+#测试qdrant
+@app.route("/test/qdrant/search", methods=['POST'])
+def test_qdrant_search():
+    data = json.loads(request.get_data())
+    message = data['message']
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    openai_embeddings = openai.Embedding.create(model="text-embedding-ada-002", input=message)
+    logger.debug("embedding({0})=".format(openai_embeddings["data"][0]["embedding"]))
+
+    search_result = QdrantService().search(query_vector=openai_embeddings["data"][0]["embedding"], limit=3)
+
+    res_arr = []
+    for result in search_result:
+        res = {}
+        res['score'] = result.score
+        res['resource_name'] =  result.payload['resource_name']
+        res['text'] =  result.payload['text']
+        res_arr.append(res)
+    return res_arr
 
 if __name__ == '__main__':
     app.run(host=FLASK_HOST, port=FLASK_PORT)
