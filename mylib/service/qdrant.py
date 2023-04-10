@@ -1,5 +1,8 @@
 from configparser import ConfigParser
-from typing import List
+from typing import (
+    List,
+    Optional,
+)
 
 from qdrant_client import QdrantClient
 from qdrant_client.conversions import common_types as types
@@ -13,31 +16,33 @@ class QdrantService:
     def __init__(self):
         self.config = ConfigParser()
         self.config.read('.env')
-        self.qdrant_ip = self.config.get('qdrant', 'ip')
-        self.qdrant_port = self.config.getint('qdrant', 'port')
-        self.collection_name = self.config.get('qdrant', 'collection_name')
-        self.openai_embedding_model = "text-embedding-ada-002"
-        self.vector_size = 1536
-        self.qdclient = QdrantClient(self.qdrant_ip, port=self.qdrant_port)
+        self.QDRANT_IP = self.config.get('qdrant', 'ip', fallback='0.0.0.0')
+        self.QDRANT_PORT = self.config.getint('qdrant', 'port', fallback=6333)
+        self.COLLECTION_NAME = self.config.get('qdrant', 'collection_name', fallback='data_collection')
+        self.SCORE_THRESHOLD = self.config.get('qdrant', 'score_threshold', fallback=0.0)
+        self.OPENAI_EMBEDDING_MODEL = "text-embedding-ada-002"
+        self.VECTOR_SIZE = 1536
+        self.qdclient = QdrantClient(self.QDRANT_IP, port=self.QDRANT_PORT)
 
         collections = self.qdclient.get_collections()
-        if any(collection.name == self.collection_name for collection in collections.collections):
-            logger.info("找到qdrant collection:{0}".format(self.collection_name))
+        if any(collection.name == self.COLLECTION_NAME for collection in collections.collections):
+            logger.info("找到qdrant collection:{0}".format(self.COLLECTION_NAME))
         else:
-            logger.info("qdrant collection:{0}不存在".format(self.collection_name))
-            self.qdclient.create_collection(collection_name=self.collection_name,
-                                            vectors_config=VectorParams(size=self.vector_size,
+            logger.info("qdrant collection:{0}不存在".format(self.COLLECTION_NAME))
+            self.qdclient.create_collection(collection_name=self.COLLECTION_NAME,
+                                            vectors_config=VectorParams(size=self.VECTOR_SIZE,
                                                                         distance=Distance.COSINE))
 
     # 保存到Qdrant(update or insert)
     def upsert(self, point: PointStruct):
         logger.info('FileStruct{0}即将写入qdrant...'.format(point.id))
         # 创建索引
-        self.qdclient.upsert(collection_name=self.collection_name, wait=True, points=[point])
+        self.qdclient.upsert(collection_name=self.COLLECTION_NAME, wait=True, points=[point])
         logger.info(
             "resource{0}的第{1}页写入qdrant成功".format(point.payload['resource_name'], point.payload['page_no']))
 
-    def search(self, query_vector, limit=3, search_params={"exact": False, "hnsw_ef": 128}) -> List[types.ScoredPoint]:
+    def search(self, query_vector, search_params={"exact": False, "hnsw_ef": 128},
+               limit=3) -> List[types.ScoredPoint]:
         """
         搜索与query_vector最相似的limit个向量
         :param query_vector:
@@ -47,10 +52,11 @@ class QdrantService:
         """
         try:
             search_result = self.qdclient.search(
-                collection_name=self.collection_name,
+                collection_name=self.COLLECTION_NAME,
                 query_vector=query_vector,
+                search_params=search_params,
                 limit=limit,
-                search_params=search_params
+                score_threshold=self.SCORE_THRESHOLD,
             )
             return search_result
         except Exception as e:
@@ -64,7 +70,7 @@ class QdrantService:
         :return:
         """
         try:
-            self.qdclient.delete(collection_name=self.collection_name, points_selector=selector)
+            self.qdclient.delete(collection_name=self.COLLECTION_NAME, points_selector=selector)
         except Exception as e:
             logger.error("Qdrant删除失败: {0}".format(str(e)))
 

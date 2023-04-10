@@ -11,9 +11,6 @@ class AIService:
     def __init__(self):
         self.config = ConfigParser()
         self.config.read('.env')
-        self.QDRANT_IP = self.config.get('qdrant', 'ip')
-        self.QDRANT_PORT = self.config.getint('qdrant', 'port')
-        self.COLLECTION_NAME = self.config.get('qdrant', 'collection_name')
         self.OPENAI_EMBEDDING_MODEL = "text-embedding-ada-002"
         self.VECTOR_SIZE = 1536
         self.OPENAI_CHAT_COMPLETION_MODEL = "gpt-3.5-turbo"

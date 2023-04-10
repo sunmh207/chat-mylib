@@ -29,9 +29,9 @@ app.debug = True  # 开启debug模式
 config = ConfigParser()
 config.read('.env')
 
-UPLOAD_DIR = config.get('storage', 'upload_dir')
-FLASK_HOST = config.get('flask', 'host')
-FLASK_PORT = config.getint('flask', 'port')
+UPLOAD_DIR = config.get('storage', 'upload_dir', fallback='upload')
+FLASK_HOST = config.get('flask', 'host', fallback='127.0.0.1')
+FLASK_PORT = config.getint('flask', 'port', fallback=3000)
 
 DINGTALK_WEBHOOK_URL = config.get('dingtalk', 'webhook_url')
 DINGTALK_SECRET = config.get('dingtalk', 'secret')
