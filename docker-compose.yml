@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      OPENAI_API_KEY:
+    depends_on:
+      - mysql
+      - qdrant
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mylib
+    volumes:
+      - ./scripts:/docker-entrypoint-initdb.d
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - ~/qdrant_storage:/qdrant/storage

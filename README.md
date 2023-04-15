@@ -10,56 +10,29 @@
 
 场景B：智能客服。企业可将用户手册、客户FAQ等内容上传至系统，系统可根据内容自动回答客户的问题，提高客户满意度和服务效率。
 
-## 安装说明
+## 安装说明 (基于docker compose)
 
-### 1.安装python 3.10版本
-略
+### 1.设置OPENAI_API_KEY
+获取本项目源代码, 在docker-composer.yml中填找到OPENAI_API_KEY,填写你的key。
+```
+OPENAI_API_KEY: sk-xxxx
+```
+若没有OPENAI_API_KEY，请在这里获取 [OpenAI API Keys](https://platform.openai.com/account/api-keys)
 
-### 2.安装python依赖
+### 2.启动docker compose
 
 ```
-pip install -r requirements.txt
+ docker-compose up
 ```
 
-### 3.安装Qdrant向量数据库
+### 3.访问
 
-```
-docker run -p 6333:6333 -v $(pwd)/qdrant_storage:/qdrant/storage qdrant/qdrant
-```
-
-### 4.安装MySQL数据库
-
-先安装mysql-server(以ubuntu系统为例)
-```
-sudo apt install mysql-server
-```
-
-再执行/scripts目录下的脚本，创建数据库和表。
-
-### 5.设置OPENAI_API_KEY环境变量
-
-```
-export OPENAI_API_KEY={你的OPENAI_API_KEY}
-```
-
-### 6.配置参数
-
-复制文件.env.dist 为 .env，修改文件里的相关参数，如配置MySQL用户名/密码等
-
-### 7.运行
-
-```
-python server.py
-```
-
-### 8.访问
-
-访问地址：http://localhost:3000  
+访问地址：http://127.0.0.1:3000  
 
 上传txt或pdf文件，然后在对话框询问即可。
 
 
-### 9.Demo站：
+### 4.Demo站：
 
 PC端: [http://www.chatmylib.xyz](http://www.chatmylib.xyz)  
 
