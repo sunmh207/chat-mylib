@@ -32,7 +32,7 @@ OPENAI_API_KEY: sk-xxxx
 上传txt或pdf文件，然后在对话框询问即可。
 
 
-### 4.Demo站：
+## Demo站：
 
 PC端: [http://www.chatmylib.xyz](http://www.chatmylib.xyz)  
 
