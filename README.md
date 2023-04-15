@@ -6,20 +6,20 @@
 
 场景举例：
 
-场景A：内部资料检索。企业可将内部资料（如员工手册、企业知识等）上传至系统，员工可通过问答方式迅速获取所需内容，提高工作效率和准确性。
+场景A：内部资料检索。企业可将内部资料（如员工手册、企业知识等）上传至系统，员工可通过问答方式迅速获取所需内容，提高工作效率。
 
-场景B：智能客服。企业可将用户手册、客户FAQ等内容上传至系统，系统可根据内容自动回答客户的问题，提高客户满意度和服务效率。
+场景B：智能客服。企业可将用户手册、客户FAQ等内容上传至系统，系统可根据内容自动回答客户的问题，提高服务效率。
 
-## 安装说明 (基于docker compose)
+## 安装说明
 
 ### 1.设置OPENAI_API_KEY
-获取本项目源代码, 在docker-compose.yml中填找到OPENAI_API_KEY, 填写你的key。
+获取本项目源代码, 在docker-compose.yml中找到OPENAI_API_KEY配置项, 填写你的key。
 ```
 OPENAI_API_KEY: sk-xxxx
 ```
 若还没有自己的key，请在这里获取 [OpenAI API Keys](https://platform.openai.com/account/api-keys)
 
-### 2.启动docker compose
+### 2.启动
 
 ```
  docker-compose up
@@ -29,7 +29,7 @@ OPENAI_API_KEY: sk-xxxx
 
 访问地址：http://127.0.0.1:3000  
 
-上传txt或pdf文件，然后在对话框询问即可。
+上传txt、pdf或excel文件，然后在对话框询问即可。
 
 
 ## Demo站：
