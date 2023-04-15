@@ -13,11 +13,11 @@
 ## 安装说明 (基于docker compose)
 
 ### 1.设置OPENAI_API_KEY
-获取本项目源代码, 在docker-composer.yml中填找到OPENAI_API_KEY,填写你的key。
+获取本项目源代码, 在docker-compose.yml中填找到OPENAI_API_KEY,填写你的key。
 ```
 OPENAI_API_KEY: sk-xxxx
 ```
-若没有OPENAI_API_KEY，请在这里获取 [OpenAI API Keys](https://platform.openai.com/account/api-keys)
+若还没有自己的key，请在这里获取 [OpenAI API Keys](https://platform.openai.com/account/api-keys)
 
 ### 2.启动docker compose
 
