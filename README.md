@@ -13,7 +13,7 @@
 ## 安装说明 (基于docker compose)
 
 ### 1.设置OPENAI_API_KEY
-获取本项目源代码, 在docker-compose.yml中填找到OPENAI_API_KEY,填写你的key。
+获取本项目源代码, 在docker-compose.yml中填找到OPENAI_API_KEY, 填写你的key。
 ```
 OPENAI_API_KEY: sk-xxxx
 ```
