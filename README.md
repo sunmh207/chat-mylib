@@ -32,13 +32,6 @@ OPENAI_API_KEY: sk-xxxx
 上传txt、pdf或excel文件，然后在对话框询问即可。
 
 
-## Demo站：
-
-PC端: [http://www.chatmylib.xyz](http://www.chatmylib.xyz)  
-
-手机端: [http://www.chatmylib.xyz/mobile](http://www.chatmylib.xyz/mobile)
-
-
 ## 对接钉钉机器人
 将问答系统对接到内部钉钉群里，通过 @机器人 与之对话，获得资料信息。效果如下图：
 
