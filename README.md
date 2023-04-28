@@ -32,6 +32,10 @@ git clone https://github.com/sunmh207/chat-mylib.git
 
 3.3 在问题框输入问题，点击【发送】
 
+效果如下图所示:
+
+![图片](docs/imgs/homepage.png)
+
 
 ## 对接钉钉机器人
 将问答系统对接到内部钉钉群里，通过 @机器人 与之对话，获得资料信息。效果如下图：
