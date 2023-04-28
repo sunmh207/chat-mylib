@@ -44,6 +44,11 @@ git clone https://github.com/sunmh207/chat-mylib.git
 
 配置步骤见 [对接钉钉机器人](docs/dingtalk_integration_guide.md)
 
+## Demo站：
+
+PC端: http://www.chatmylib.xyz
+
+手机端: http://www.chatmylib.xyz/mobile
 
 ## 备注
 
