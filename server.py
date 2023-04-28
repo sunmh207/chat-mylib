@@ -57,6 +57,11 @@ def upload_success_response(msg, summary):
 def homepage():
     return render_template('index.html')
 
+@app.route('/setkey', methods=['POST'])
+def receive_key():
+    os.environ["OPENAI_API_KEY"] = request.form['key']
+    print('OPENAI_API_KEY 被设置为：',os.getenv("OPENAI_API_KEY"))
+    return "OpenAI API Key设置成功！"
 
 @app.route("/mobile")
 def mobile():
@@ -92,6 +97,8 @@ def upload():
 
 @app.route('/completions', methods=['POST'])
 def completions():
+    if not os.getenv("OPENAI_API_KEY"):
+        return {"status": "error", "data": {"message": "没有OpenAI API Key，请点击右上角[key]按钮填写。"}}
     prompts = request.get_json()
     result = AIService().make_completion(prompts)
     return {"status": "success", "data": {"message": "返回成功", "result": result}}

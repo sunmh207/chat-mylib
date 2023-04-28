@@ -12,24 +12,25 @@
 
 ## 安装说明
 
-### 1.设置OPENAI_API_KEY
-获取本项目源代码, 在docker-compose.yml中找到OPENAI_API_KEY配置项, 填写你的key。
+### 1.获取本项目代码
 ```
-OPENAI_API_KEY: sk-xxxx
+git clone https://github.com/sunmh207/chat-mylib.git
 ```
-若还没有自己的key，请在这里获取 [OpenAI API Keys](https://platform.openai.com/account/api-keys)
-
-### 2.启动
-
+### 2.启动系统
 ```
+ cd chat-mylib
  docker-compose up
 ```
 
 ### 3.访问
 
-访问地址：http://127.0.0.1:3000  
+浏览器访问地址：http://127.0.0.1:3000  
 
-上传txt、pdf或excel文件，然后在对话框询问即可。
+3.1 点击页面右上角【key】 按钮，填写自己的OpenAI API Key
+
+3.2 上传txt、pdf或excel文件。
+
+3.3 在问题框输入问题，点击【发送】
 
 
 ## 对接钉钉机器人

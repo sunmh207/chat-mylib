@@ -253,6 +253,23 @@ const gotoAdmin = function(){
 const feedback = function(){
      window.open("https://support.qq.com/product/538086","_blank");
 }
+const setKey = function(){
+    const userInput = prompt("请输入您的OpenAI API Key:");
+    if (userInput != null) {
+        const xhr = new XMLHttpRequest();
+        const url = "/setkey";
+        const data =  `key=${userInput}` ;
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.log(xhr.responseText);
+                alert(xhr.responseText);
+            }
+        };
+        xhr.send(data);
+    }
+}
 //发送按钮点击事件
 sendBtnEle.onclick = genFunc;
 //上传资料按钮事件
